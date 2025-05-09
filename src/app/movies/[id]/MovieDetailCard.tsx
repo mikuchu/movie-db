@@ -30,10 +30,12 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
         await addMovieToRated(accountId, movie.id, sessionId, rate)
 
     }
+
     if (login) {
         const isRate = rateList.find(m => m.id === movie.id);
         if (isRate !== undefined && isRate.rating !== undefined) rating = String(isRate.rating)
     }
+
     return (
         <Card sx={{ display: 'flex', margin: '2rem' }}>
             <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" width={450} height={700} />

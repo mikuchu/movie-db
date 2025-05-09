@@ -85,56 +85,91 @@ export const getMoviesListByCategoryAndPage = async (page: number, select: strin
         })
 }
 
+const mapMoviesToCards = (movies: Movie[]): MovieCard[] =>
+    movies.map(m => ({
+        title: m.title,
+        id: m.id,
+        poster_path: m.poster_path,
+        vote_average: String(m.vote_average),
+        rating: m.rating
+    }));
+
 export const getFavoriteMoviesList = async (accountId: string, sessionID: string) => {
-    const url = `${BASE_URL}/account/${accountId}/favorite/movies?session_id=${sessionID}&api_key=${API_KEY}`;
-    return fetch(url, { method: 'GET' })
-        .then(async (res) => {
-            if (res.ok) {
-                const data = await res.json();
-                const l: MovieCard[] = data.results.map((m: Movie) => {
-                    return {
-                        title: m.title,
-                        id: m.id,
-                        poster_path: m.poster_path,
-                        vote_average: m.vote_average,
-                    }
-                })
-                return l;
-            } else {
-                console.error("Network response was not ok");
-                return []
-            }
-        }).catch((error) => {
-            console.error("Error fetching movies:", error);
-            return [];
-        })
+    const result: MovieCard[] = [];
+
+    const firstPageData = await getFavoriteMoviesListByPage(accountId, sessionID, 1);
+    if (!firstPageData) return result;
+
+    result.push(...mapMoviesToCards(firstPageData.results));
+    const totalPages = firstPageData.total_pages;
+
+    for (let i = 2; i <= totalPages; i++) {
+        const pageData = await getFavoriteMoviesListByPage(accountId, sessionID, i);
+        if (pageData) {
+            result.push(...mapMoviesToCards(pageData.results));
+        }
+    }
+
+    return result;
+};
+
+const getFavoriteMoviesListByPage = async (accountId: string, sessionID: string, page: number): Promise<MoviesList | null> => {
+    const url = `${BASE_URL}/account/${accountId}/favorite/movies?session_id=${sessionID}&page=${page}`;
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${Bearer_TOKEN}`
+        }
+    }).then(async (res) => {
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        } else {
+            return null
+        }
+    });
 }
 
+
 export const getRatedMoviesList = async (accountId: string, sessionID: string): Promise<MovieCard[] | null> => {
-    const url = `${BASE_URL}/account/${accountId}/rated/movies?session_id=${sessionID}&api_key=${API_KEY}`;
-    return fetch(url, { method: 'GET' })
-        .then(async (res) => {
-            if (res.ok) {
-                const data = await res.json();
-                const l: MovieCard[] = data.results.map((m: Movie) => {
-                    return {
-                        title: m.title,
-                        id: m.id,
-                        poster_path: m.poster_path,
-                        vote_average: m.vote_average,
-                        rating: m.rating
-                    }
-                })
-                return l;
-            } else {
-                console.error("Network response was not ok");
-                return []
-            }
-        }).catch((error) => {
-            console.error("Error fetching movies:", error);
-            return [];
-        })
+    const result: MovieCard[] = [];
+
+    const firstPageData = await getRatedMoviesListByPage(accountId, sessionID, 1);
+    if (!firstPageData) return result;
+
+    result.push(...mapMoviesToCards(firstPageData.results));
+    const totalPages = firstPageData.total_pages;
+
+    for (let i = 2; i <= totalPages; i++) {
+        const pageData = await getRatedMoviesListByPage(accountId, sessionID, i);
+        if (pageData) {
+            result.push(...mapMoviesToCards(pageData.results));
+        }
+    }
+
+    return result;
+
 }
+
+const getRatedMoviesListByPage = async (accountId: string, sessionID: string, page: number): Promise<MoviesList | null> => {
+    const url = `${BASE_URL}/account/${accountId}/rated/movies?session_id=${sessionID}&page=${page}`;
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${Bearer_TOKEN}`
+        }
+    }).then(async (res) => {
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        } else {
+            return null
+        }
+    });
+}
+
 
 export const addMovieToFavorite = async (accountId: string | null, movieId: Movie | MVCard, sessionId: string | null, favorite: boolean): Promise<string> => {
     if (accountId === null || sessionId === null) return "ID Error";

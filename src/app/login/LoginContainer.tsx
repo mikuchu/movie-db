@@ -13,6 +13,7 @@ const LoginContainer: React.FC = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+    const [loginError, setLoginError] = useState(false)
     const userLogin = useSelector(isLogin)
     const dispatch = useDispatch()
     const router = useRouter();
@@ -45,17 +46,18 @@ const LoginContainer: React.FC = () => {
                 ...data,
             }
             dispatch(setLogin(payload))
+            setLoginError(false)
         } else {
-            setError(true)
+            setLoginError(true)
         }
         setLoading(false)
+        setUsername("")
+        setPassword("")
     }
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            if (userLogin) {
-                router.replace('/');
-            }
+        if (userLogin) {
+            router.replace('/');
         }
     }, [userLogin, router]);
 
@@ -63,7 +65,7 @@ const LoginContainer: React.FC = () => {
 
     return (
         <>
-            {error && <div className="font" style={{ paddingTop: "10px", color: "red" }}> Failed to login! </div>}
+            {loginError && <div className="font" style={{ paddingTop: "10px", color: "red" }}> Failed to login! </div>}
             <Box
                 component="form"
                 sx={{

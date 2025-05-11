@@ -37,8 +37,10 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
     }
 
     return (
-        <Card sx={{ display: 'flex', margin: '2rem' }}>
-            <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" width={450} height={700} />
+        <Card sx={{ width: "90%", display: 'flex', margin: '2rem' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
+                <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" fill style={{ objectFit: 'contain' }} />
+            </div>
             <Box sx={{ display: 'flex', flexDirection: 'column', padding: '0 1rem' }}>
                 <CardContent sx={{ flex: '4 0 auto' }}>
                     <Typography component="div" variant="h3" sx={{ textAlign: 'center' }}>

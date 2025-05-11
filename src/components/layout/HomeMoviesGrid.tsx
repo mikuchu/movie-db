@@ -11,8 +11,8 @@ interface MoviesGridProps {
 const MoviesGrid: React.FC<MoviesGridProps> = (prop: MoviesGridProps) => {
     const mvLists: Movie[] | MVCard[] = prop.moviesList;
     return (
-        <Box sx={{ width: '100%', p: 5 }}>
-            <Grid container spacing={2} columns={4}>
+        <Box sx={{ minWidth: '100rem', width: '100%', p: 5, overflowX: 'auto' }}>
+            <Grid container spacing={2} columns={4} >
                 {mvLists.map((movie: Movie | MVCard, index) => (
                     <Grid size={1} key={index}>
                         <MovieCard movie={movie} />

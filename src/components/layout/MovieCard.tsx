@@ -27,7 +27,9 @@ const MovieCard: React.FC<MoviesCardProps> = (prop: MoviesCardProps) => {
     }
     return (
         <Card sx={{ maxWidth: 345, minWidth: 345 }}>
-            <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" width={350} height={500} />
+            <div style={{ position: 'relative', width: '100%', height: '500px' }}>
+                <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" fill style={{ objectFit: 'cover' }} />
+            </div>
             <CardContent style={{ flex: "flex", textAlign: "center" }}>
                 <Typography gutterBottom variant="h5" component="div">
                     <Link href={`/movies/${movie.id}`}> {movie.title} </Link>

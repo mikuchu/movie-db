@@ -29,7 +29,7 @@ const MovieDetail: React.FC<MovieDetailProps> = (prop: MovieDetailProps) => {
     return (
         movieDetails ?
             <MovieDetailCard movie={movieDetails} />:
-            <div style={{ flex: "flex", textAlign: "center", padding: "2rem" }}>  Unable to find Movie Detail By given ID </div>
+            <div style={{ width: "100%", flex: "flex", textAlign: "center", padding: "2rem" }}>  Unable to find Movie Detail By given ID </div>
     );
 }
 

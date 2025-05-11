@@ -1,5 +1,5 @@
 "use client"
-import { Card, Box, CardContent, Typography, Select, MenuItem, SelectChangeEvent, Button, FormControl, InputLabel } from '@mui/material';
+import { Card, Box, CardContent, Typography, Select, MenuItem, SelectChangeEvent, Button, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import { MovieDetail as MD, IMG_SRC_BASE } from '@/common/type';
 import Image from 'next/image';
 import { FaStar } from "react-icons/fa";
@@ -10,6 +10,8 @@ import { addMovieToRated } from '@/lib/api';
 
 const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
     const [rate, setRate] = useState("1")
+    const [rateIt, setRateIt] = useState(false);
+    const [rateMessage, setRateMessage] = useState("")
     const numbers = useMemo(() => { return Array.from({ length: 10 }, (_, i) => i + 1); }, []);
     const login = useSelector(isLogin)
     const accountId = useSelector(userID)
@@ -18,6 +20,7 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
     const dispatch = useDispatch()
     let rating = "Not Yet"
     const handleRate = (event: SelectChangeEvent) => {
+
         setRate(event.target.value);
     };
 
@@ -27,8 +30,8 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
             rate
         }
         dispatch(userSetRate(payload))
-        await addMovieToRated(accountId, movie.id, sessionId, rate)
-
+        setRateIt(true)
+        setRateMessage(await addMovieToRated(accountId, movie.id, sessionId, rate))
     }
 
     if (login) {
@@ -37,7 +40,19 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
     }
 
     return (
-        <Card sx={{ width: "90%", display: 'flex', margin: '2rem' }}>
+        <>
+            <Snackbar
+                open={rateIt}
+                autoHideDuration={5000}
+                onClose={() => setRateIt(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={() => setRateIt(false)} severity="success" variant="filled">
+                    {rateMessage}
+                </Alert>
+            </Snackbar>
+
+            <Card sx={{ width: "90%", display: 'flex', margin: '2rem' }}>
             <div style={{ position: 'relative', width: '100%' }}>
                 <Image src={`${IMG_SRC_BASE}${movie.poster_path}`} alt="poster" fill style={{ objectFit: 'contain' }} />
             </div>
@@ -130,6 +145,8 @@ const MovieDetailCard: React.FC<{ movie: MD }> = ({ movie }) => {
                 </CardContent>
             </Box >
         </Card >
+        </>
+
     );
 }
 
